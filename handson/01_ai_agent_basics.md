@@ -99,4 +99,4 @@ AIエージェントをより実用的にするには、外部システム（デ
 
 ---
 
-[目次](../README.md) | [次へ：MCPサーバーとは →](02_01_mcp_overview.md)
+[目次](../README.md) | [次へ：MCPサーバーとは →](02_mcp_overview.md)
