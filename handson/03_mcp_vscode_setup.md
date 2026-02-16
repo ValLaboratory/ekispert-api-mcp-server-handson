@@ -64,7 +64,7 @@ MCPサーバーを使うには、設定ファイル`mcp.json`に追記します�
 }
 ```
 
-- 以降、PlaywrightやMarkItDown、駅すぱあと API MCPサーバーなどの設定をこの `servers` 配下に追記します。
+- 以降、PlaywrightやMarkItDown、「駅すぱあと API MCPサーバー」などの設定をこの `servers` 配下に追記します。
 
 ---
 

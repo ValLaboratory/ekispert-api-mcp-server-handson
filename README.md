@@ -1,8 +1,8 @@
-# 駅すぱあと API MCPサーバー ハンズオン
+# 「駅すぱあと API MCPサーバー」ハンズオン
 
 ## 概要
 
-このハンズオンでは、MCP（Model Context Protocol）の基礎を学び、実際にMCPサーバーを動かしながら、[駅すぱあと API MCPサーバー](https://github.com/ValLaboratory/ekispert-api-mcp-server-docs)の活用方法を体験します。
+このハンズオンでは、MCP（Model Context Protocol）の基礎を学び、実際にMCPサーバーを動かしながら、「[駅すぱあと API MCPサーバー](https://github.com/ValLaboratory/ekispert-api-mcp-server-docs)」の活用方法を体験します。
 
 **所要時間**: 約90分
 
@@ -29,7 +29,7 @@ MCP（Model Context Protocol）の基礎を理解し、MCPサーバーとMCPク�
 - MCPの通信方式（stdio方式とStreamable HTTP方式）
 - MCPサーバーが提供する機能（Tool、Resource、Prompt）
 - 公式およびコミュニティのMCPサーバー活用例
-- 駅すぱあと API MCPサーバーの位置づけ
+- 「駅すぱあと API MCPサーバー」の位置づけ
 
 **付録資料**: [付録：MCPサーバーのセキュリティガイド](handson/appendix/mcp_security.md)
 
@@ -45,11 +45,11 @@ stdio方式とStreamable HTTP方式の両方のMCPサーバーを実際に体験
 
 **3-1. stdio方式のMCPサーバーを体験する（15分）**
 - Playwright MCPサーバーの設定とハンズオン
-  - 駅すぱあと公式サイトの操作
+  - 「駅すぱあと」公式サイトの操作
   - 経路検索ページでのフォーム操作
 
 **3-2. Streamable HTTP方式のMCPサーバーを体験する（15分）**
-- 駅すぱあと API MCPサーバーの設定とハンズオン
+- 「駅すぱあと API MCPサーバー」の設定とハンズオン
   - 基本的な経路探索
   - 駅情報の取得
   - 探索条件を指定した応用操作
