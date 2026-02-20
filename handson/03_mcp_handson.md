@@ -9,20 +9,53 @@
 - 実務で活用できる便利なMCPサーバーを知る
 - MCP Registryサービスの使い方を理解し、自分に適したMCPサーバーを探せるようになる
 
+> [!NOTE]
+> VS CodeとGitHub Copilotのセットアップが済んでいない方は、[VS CodeでのMCPサーバー利用準備](appendix/mcp_vscode_setup.md)を参考にセットアップを行なってください。
+
 ---
 
 ## MCPサーバーの通信方式について
 
 MCPサーバーの通信方式（stdio方式・Streamable HTTP方式）については、[前のセクション](02_mcp_overview.md)で詳しく説明しています。詳細はそちらを参照してください。
 
-----
+---
+
+## 3-0. `mcp.json` の作成
+
+VS CodeでMCPサーバーを使うには、設定ファイル`mcp.json`を使用します。<br>
+
+**MCPサーバーをユーザー設定として自身のVS Code全体で使用したい場合：**
+1. `Cmd+Shift+P`でコマンドパレットを開く。
+2. 「MCP: Open User Configuration」を実行。
+3. `mcp.json` が作成される。
+   - macOS/Linuxの場合：`~/Library/Application Support/Code/User/mcp.json` 
+   - Windowsの場合：`%APPDATA%\Code\User\mcp.json` 
+
+**MCPサーバーをワークスペース設定としてリポジトリ単位で使用したい場合：**
+1. ハンズオン用のVS Codeワークスペース、もしくは任意のフォルダを開く。
+2. プロジェクト直下に`.vscode` フォルダーが無ければ作成し、その中に `mcp.json` を新規作成する。
+   - macOS/Linuxの場合： `.vscode/mcp.json`
+   - Windowsの場合： `.vscode\mcp.json`
+
+`mcp.json`に、まずは空の `servers` オブジェクトを用意します。
+
+```json
+{
+  "servers": {}
+}
+```
+
+- 以降、Playwrightや、「駅すぱあと API MCPサーバー」などのMCPサーバーの設定を `servers` 配下に追記します。
+
+---
+
 
 ## 3-1. stdio方式のMCPサーバー
 
 ### Playwright MCPサーバー
 
 Playwright MCPサーバーは、ブラウザをAIエージェントから直接操作するためのサーバーです。
-[GitHub MCP Registry](https://github.com/mcp) （GitHubが管理・運営しているレジストリ）を通じて、簡単にインストールできます。
+[GitHub MCP Registry](https://github.com/mcp)（GitHubが管理・運営しているレジストリ）を通じて、簡単にインストールできます。
 
 | 項目 | 内容 |
 |------|------|
@@ -34,32 +67,76 @@ Playwright MCPサーバーは、ブラウザをAIエージェントから直接�
 
 - インターネット経由でGitHubにアクセスできる
 - VS CodeでGitHub Copilotのチャットが使える
-Node.js 22以降（LTS版推奨）
-  - Node.jsをインストールしていない場合はHomebrew等でNode.js（npx同梱）を入れてください。
+- Node.js 22以降（LTS版推奨）
+  - macOS/Linuxの場合はHomebrew等でNode.js（npx同梱）を入れてください。
     ```sh
+    # Homebrewでインストール
     brew install node@22
+    
+    # インストールされているか確認
+    node -v
+    npm -v
+
+    # npxのパスの確認
+    which npx
+    # => /opt/homebrew/opt/node@22/bin/npx
+    ```
+  - Windowsの場合は[公式サイト](https://nodejs.org/ja)からインストーラー（LTS版推奨）をダウンロードして実行してください。<br>
+    インストール後、コマンドプロンプトまたはPowerShellで下記コマンドでバージョンを確認できます。
+    ```sh
+    # インストールされているか確認
+    node -v
+    npm -v
+  
+    # npxのパスの確認
+    where npx
+    # => C:\Program Files\nodejs\npx.cmd
     ```
 
 **Step 1: GitHub MCPレジストリを開く**
 
-GitHub MCP Registryから [Playwright MCP](https://github.com/mcp/microsoft/playwright-mcp) のページを開きます。
-「Install in VS Code」をクリックすると、VS Codeが開きPlaywright MCPサーバーのインストール画面が表示されます。
+GitHub MCP Registryから [Playwright MCP](https://github.com/mcp/microsoft/playwright-mcp) のページを開きます。<br>
+右上の緑ボタン「Install MCP server」のプルダウンから「Install in VS Code」をクリックするとVS Codeが開きます。
 
 **Step 2: Playwright MCPサーバーをインストールする**
 
-VS Codeに表示されたPlaywright MCPサーバーの詳細画面で「Install Server」を押すと、自動で設定が追加されます。
+VS Codeに表示されたPlaywright MCPサーバーのインストール画面から追加します。<br>
+ユーザー設定として使用したい場合は「インストール」、<br>
+ワークスペースでのみ使用したい場合は「ワークスペースにインストール」を押して追加します。
+いずれも自動で`mcp.json`に設定が追加されます。
 
 **Step 3: `mcp.json` を確認する**
 
 VS Codeが生成した設定を `mcp.json` で確認します（例）。
 
-```json
+```diff
 "servers": {
-  "playwright": {
-    "command": "npx",
-    "args": ["@modelcontextprotocol/server-playwright"],
-    "type": "stdio"
-  }
++  "microsoft/playwright-mcp": {
++    "type": "stdio",
++    "command": "npx",
++    "args": [
++      "@playwright/mcp@latest"
++    ],
++    "gallery": "https://api.mcp.github.com",
++    "version": "0.0.1-seed"
++  }
+}
+```
+nodeを複数バージョンインストールしている場合、起動出来ずエラーになることがあります。
+下記を参考に必要に応じてPATH、環境変数の指定を追記してください。
+```json
+"microsoft/playwright-mcp": {
+  "type": "stdio",
+  "command": "/opt/homebrew/opt/node@22/bin/npx",        // macOS/Linux
+  // "command": "C:\\Program Files\\nodejs\\npx",        // Windows
+  "args": [
+    "@playwright/mcp@latest"
+  ],
+  "env": {
+    "PATH": "/opt/homebrew/opt/node@22/bin:${env:PATH}"  // macOS/Linux
+    // "PATH": "C:\\Program Files\\nodejs;${env:PATH}"   // Windows
+  },
+  ...
 }
 ```
 
@@ -89,7 +166,7 @@ Playwrightで https://roote.ekispert.net/ を開き、出発に 東京、到着�
 
 ### 駅すぱあと API MCPサーバー
 
-「[駅すぱあと API MCPサーバー](https://github.com/ValLaboratory/ekispert-api-mcp-server-docs)」は、株式会社ヴァル研究所が提供する経路検索WebAPI「駅すぱあと API」をMCP経由で呼び出せる公式サーバーです。経路探索・駅情報取得・探索条件生成といったToolを提供しており、VS Code + GitHub Copilot などのMCPクライアントから自然言語で利用できます。
+「[駅すぱあと API MCPサーバー](https://github.com/ValLaboratory/ekispert-api-mcp-server-docs)」は、株式会社ヴァル研究所が提供する経路検索WebAPI「駅すぱあと API」をMCPサーバー経由で呼び出せる公式サーバーです。経路探索・駅情報取得・探索条件生成といったToolを提供しており、VS Code + GitHub Copilot などのMCPクライアントから自然言語で利用できます。
 
 #### 利用可能な機能一覧
 本MCPサーバーが提供する機能（Tool）の一覧とその詳細です。新しい機能を今後も順次追加予定です。
@@ -109,35 +186,67 @@ Playwrightで https://roote.ekispert.net/ を開き、出発に 東京、到着�
 
 「駅すぱあと API」のアクセスキーを環境変数に登録します。
 
-macOS / Linux の場合、ターミナルで以下を実行してください。
+* macOS / Linux の場合：
+  ```bash
+  # 環境変数に一時的に設定（現在のターミナルのみ有効）
+  export EKISPERT_API_ACCESS_KEY="YOUR_ACCESS_KEY_HERE"
+  echo $EKISPERT_API_ACCESS_KEY
 
-```bash
-export EKISPERT_API_ACCESS_KEY="YOUR_ACCESS_KEY_HERE"
-```
+  ```
 
-永続化したい場合は `~/.zshrc` や `~/.bashrc` に同じ行を追記し、`source ~/.zshrc` で反映させます。
+* Windows の場合（コマンドプロンプト／PowerShell）：
+  ```sh
+  # コマンドプロンプトの場合
+  # アクセスキーを設定
+  set EKISPERT_API_ACCESS_KEY=YOUR_ACCESS_KEY_HERE
+  # 設定確認
+  echo %EKISPERT_API_ACCESS_KEY%
 
-設定後、`echo $EKISPERT_API_ACCESS_KEY` を実行し、アクセスキーが表示されれば設定完了です。
+  # PowerShellの場合
+  # アクセスキーを設定
+  $env:EKISPERT_API_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE"
+  # 設定確認
+  $env:EKISPERT_API_ACCESS_KEY
+  ```
 
 **Step 2: `mcp.json` に追記する**
 
 `servers` に下記を追記します。`${env:EKISPERT_API_ACCESS_KEY}` の部分で、Step 1 で設定した環境変数からアクセスキーを取得しています。
 
 ```json
-"servers": {
-  "ekispert-api-mcp-server": {
-    "type": "http",
-    "url": "https://api-mcp.ekispert.jp/mcp",
-    "headers": {
-      "ekispert-api-access-key": "${env:EKISPERT_API_ACCESS_KEY}"
-    }
+"ekispert-api-mcp-server": {
+  "type": "http",
+  "url": "https://api-mcp.ekispert.jp/mcp",
+  "headers": {
+    "ekispert-api-access-key": "${env:EKISPERT_API_ACCESS_KEY}"
   }
+}
+```
+
+`mcp.json`の差分
+```diff
+"servers": {
+  "microsoft/playwright-mcp": {
+    "type": "stdio",
+    ...
+-  }
++  },
++  "ekispert-api-mcp-server": {
++    "type": "http",
++    "url": "https://api-mcp.ekispert.jp/mcp",
++    "headers": {
++      "ekispert-api-access-key": "${env:EKISPERT_API_ACCESS_KEY}"
++    }
++  }
 }
 ```
 
 **Step 3: VS Code を再起動する**
 
-設定を反映させるため、VS Code を完全に終了してから再度起動してください。Cmd+Q でウィンドウを閉じます。
+設定を反映させるため、VS Code を完全に終了してから再度起動してください。
+
+macOSの場合は Cmd+Q でウィンドウを閉じます。
+Windowsの場合は Alt+F4 でウィンドウを閉じてください。
 
 環境変数を新しく設定した場合は、再起動後のウィンドウで作業を続けてください。リロードだけでは環境変数が反映されないことがあります。
 
@@ -282,4 +391,4 @@ MCPサーバーの起動は、`mcp.json`で「Start」ボタンをクリック�
 
 ---
 
-[← 前へ：MCPサーバー利用準備](03_mcp_vscode_setup.md) | [目次](../README.md)
+[← 前へ：MCPサーバーとは](02_mcp_overview.md) | [目次](../README.md)
